@@ -1,11 +1,15 @@
 import { useState } from "react";
 
+import { v4 as uuidv4 } from "uuid";
+
 const Todo = () => {
-    const [tasks, setTasks] = useState([]);
+    const [tasks, setTasks] = useState([{ id: 1, desc: "fixed task" }]);
     const [input, setInput] = useState("");
+    const uuid = uuidv4();
 
     const handleClick = () => {
-        setTasks([...tasks, input]);
+        const newTask = { id: uuid, desc: input };
+        setTasks([...tasks, newTask]);
         setInput("");
     };
 
@@ -15,9 +19,15 @@ const Todo = () => {
 
     const handleEnter = (e) => {
         if (e.key === "Enter") {
-            setTasks([...tasks, input]);
+            const newTask = { id: uuid, desc: input };
+            setTasks([...tasks, newTask]);
             setInput("");
         }
+    };
+
+    const handleDelete = (id) => {
+        const filtredTasks = tasks.filter((task) => task.id !== id);
+        setTasks(filtredTasks);
     };
 
     return (
@@ -31,8 +41,19 @@ const Todo = () => {
             />
             <p>Tasks: ({tasks.length})</p>
             <ol>
-                {tasks.map((task, index) => {
-                    return <li key={task + index}>{task}</li>;
+                {tasks.map((task) => {
+                    return (
+                        <li key={task.id}>
+                            {task.desc}
+                            <button
+                                onClick={() => {
+                                    handleDelete(task.id);
+                                }}
+                            >
+                                X
+                            </button>
+                        </li>
+                    );
                 })}
             </ol>
             <button onClick={handleClick}>Add ToDo task</button>
